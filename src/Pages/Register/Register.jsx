@@ -6,46 +6,56 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import * as Zod from "zod";
 
-
 const schema = Zod.object({
-    name: Zod.string().nonempty("Name is Requird").min(3,"Min Char 3").max(15,"Max Char 15"),
-    email: Zod.string().nonempty("Email is Requird").regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
-    password: Zod.string().nonempty("Password is Requird").regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
-    rePassword: Zod.string().nonempty("rePassword is Requird").regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
-    gender: Zod.string().nonempty("gender is Requird").optional(["male","female"]),
-    dateOfBirth: Zod.coerce.date().refine((val)=>{
-      let nowDate = new Date().getFullYear();
-      let birthDate = val.getFullYear();
-      return (nowDate - birthDate >= 18) 
-    },"Date of birth is inValid")
-
-
-
-}).refine((val)=>{
-  return val.password == val.rePassword 
-},{message: "PassWord Must be Match Confirm Password", path: ["rePassword"]})
+  name: Zod.string()
+    .nonempty("Name is Requird")
+    .min(3, "Min Char 3")
+    .max(15, "Max Char 15"),
+  email: Zod.string()
+    .nonempty("Email is Requird")
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+  password: Zod.string()
+    .nonempty("Password is Requird")
+    .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
+  rePassword: Zod.string()
+    .nonempty("rePassword is Requird")
+    .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
+  gender: Zod.string()
+    .nonempty("gender is Requird")
+    .optional(["male", "female"]),
+  dateOfBirth: Zod.coerce.date().refine((val) => {
+    let nowDate = new Date().getFullYear();
+    let birthDate = val.getFullYear();
+    return nowDate - birthDate >= 18;
+  }, "Date of birth is inValid"),
+}).refine(
+  (val) => {
+    return val.password == val.rePassword;
+  },
+  { message: "PassWord Must be Match Confirm Password", path: ["rePassword"] }
+);
 export default function Register() {
   let navg = useNavigate();
-  let { register, handleSubmit,formState:{errors} } = useForm({
-    resolver: zodResolver(schema)
+  let {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
   });
   console.log(errors);
-  
-  
-  
 
-  
   async function handleGetData(value) {
     console.log(value);
     let { data } = await axios
       .post(`https://linked-posts.routemisr.com/users/signup`, value)
       .catch((err) => {
-        toast.error(err.response.data.error)
+        toast.error(err.response.data.error);
         console.log(err);
       });
     if (data?.message == "success") {
       console.log(data);
-      toast.success('Registration Successfully');
+      toast.success("Registration Successfully");
       navg("/login");
     }
   }
@@ -55,7 +65,6 @@ export default function Register() {
 
   return (
     <>
-      <div>Register</div>
       <form onSubmit={handleSubmit(handleGetData)} className="max-w-sm mx-auto">
         <div className="mb-5">
           <label
@@ -71,7 +80,11 @@ export default function Register() {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Mohamed Ayman"
           />
-          {errors.name ? <p className="text-red-600 mt-2">* {errors.name.message}</p> : ""}
+          {errors.name ? (
+            <p className="text-red-600 mt-2">* {errors.name.message}</p>
+          ) : (
+            ""
+          )}
         </div>
         <div className="mb-5">
           <label
@@ -87,7 +100,11 @@ export default function Register() {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="name@gmail.com"
           />
-           {errors.email ? <p className="text-red-600 mt-2">* {errors.email.message}</p> : ""}
+          {errors.email ? (
+            <p className="text-red-600 mt-2">* {errors.email.message}</p>
+          ) : (
+            ""
+          )}
         </div>
         <div className="mb-5">
           <label
@@ -102,8 +119,11 @@ export default function Register() {
             id="password"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
-                     {errors.password ? <p className="text-red-600 mt-2">* {errors.password.message}</p> : ""}
-
+          {errors.password ? (
+            <p className="text-red-600 mt-2">* {errors.password.message}</p>
+          ) : (
+            ""
+          )}
         </div>
         <div className="mb-5">
           <label
@@ -118,8 +138,11 @@ export default function Register() {
             id="coPassword"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
-                     {errors.rePassword ? <p className="text-red-600 mt-2">* {errors.rePassword.message}</p> : ""}
-
+          {errors.rePassword ? (
+            <p className="text-red-600 mt-2">* {errors.rePassword.message}</p>
+          ) : (
+            ""
+          )}
         </div>
         <div className="mb-5">
           <label
@@ -134,8 +157,11 @@ export default function Register() {
             id="brDate"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
-                     {errors.dateOfBirth ? <p className="text-red-600 mt-2">* {errors.dateOfBirth.message}</p> : ""}
-
+          {errors.dateOfBirth ? (
+            <p className="text-red-600 mt-2">* {errors.dateOfBirth.message}</p>
+          ) : (
+            ""
+          )}
         </div>
         <div className="mb-5">
           <label
@@ -149,7 +175,11 @@ export default function Register() {
             id="gender"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
-                       {errors.gender ? <p className="text-red-600 mt-2">* {errors.gender.message}</p> : ""}
+            {errors.gender ? (
+              <p className="text-red-600 mt-2">* {errors.gender.message}</p>
+            ) : (
+              ""
+            )}
 
             <option value="male">Male</option>
             <option value="female">Female</option>

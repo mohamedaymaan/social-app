@@ -7,22 +7,28 @@ import { useNavigate } from "react-router";
 import * as Zod from "zod";
 import { UserContext } from "../../Context/UserContext/UserContext";
 
-
-
-
-
 const schema = Zod.object({
-    email: Zod.string().nonempty("Email is Requird").regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,"Email is InValid"),
-    password: Zod.string().nonempty("Password is Requird").regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
+  email: Zod.string()
+    .nonempty("Email is Requird")
+    .regex(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Email is InValid"
+    ),
+  password: Zod.string()
+    .nonempty("Password is Requird")
+    .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),
 });
 
-
 export default function Login() {
-  let {getUserData} = useContext(UserContext);
-  
+  let { getUserData } = useContext(UserContext);
+
   let navgi = useNavigate();
-  let { register, handleSubmit, formState:{errors} } = useForm({
-    resolver: zodResolver(schema)
+  let {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
   });
   async function handleLogin(value) {
     let { data } = await axios
@@ -32,17 +38,16 @@ export default function Login() {
         console.log(err);
       });
 
-      if (data?.message == "success") {
-        console.log(data);
-        toast.success('Login Successfully');
-        localStorage.setItem("token", data.token);
-        getUserData();
-        navgi('/home');
+    if (data?.message == "success") {
+      console.log(data);
+      toast.success("Login Successfully");
+      localStorage.setItem("token", data.token);
+      getUserData();
+      navgi("/home");
     }
-    }
+  }
   return (
     <>
-      <div>Login</div>
       <form onSubmit={handleSubmit(handleLogin)} className="max-w-sm mx-auto">
         <div className="mb-5">
           <label
@@ -58,8 +63,11 @@ export default function Login() {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="name@gmail.com"
           />
-                    {errors.email ? <p className="text-red-600 mt-2">* {errors.email.message}</p> : ""}
-
+          {errors.email ? (
+            <p className="text-red-600 mt-2">* {errors.email.message}</p>
+          ) : (
+            ""
+          )}
         </div>
         <div className="mb-5">
           <label
@@ -74,8 +82,11 @@ export default function Login() {
             id="password"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
-                    {errors.password ? <p className="text-red-600 mt-2">* {errors.password.message}</p> : ""}
-
+          {errors.password ? (
+            <p className="text-red-600 mt-2">* {errors.password.message}</p>
+          ) : (
+            ""
+          )}
         </div>
 
         <button

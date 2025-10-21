@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, createHashRouter, RouterProvider } from "react-router";
 import Layout from "./Layout/Layout";
 import Login from "./Pages/Login/Login";
 import Register from "./Pages/Register/Register";
@@ -16,7 +16,7 @@ export default function App() {
   useEffect(()=>{
         initFlowbite();
   },[])
-  let routes = createBrowserRouter([
+  let routes = createHashRouter([
     {
       path: "",
       element: <Layout />,
